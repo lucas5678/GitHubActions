@@ -41,4 +41,9 @@ public class UserController {
         
         return ResponseEntity.ok().body(implemento.save(mapper.map(objUser, ModeloUser.class)));
     }
+
+    @GetMapping("/teste1")
+    private ResponseEntity<String> Teste1(){
+        return ResponseEntity.ok().body("Eu sou um novo metodo");
+    }
 }

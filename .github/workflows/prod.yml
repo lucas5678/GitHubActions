@@ -1,23 +1,46 @@
 name: Deploy Application apiDemo
 
 on:
-  push:
-    branches: [main]
+    push:
+        branches: [main]
 
 jobs:
-  deploy:
-    runs-on: self-hosted
-    steps:
-      - name: Pull image from docker hub
-        run: docker pull lucasalves5678/demo:latest  
-      - name: Remove docker container
-        run: docker rm -f apiDemo || true
-      - name: Run docker container
-        run: |
-          docker run -d -p 8090:8080 --name apiDemo --net networkmysql \
-          -e MYSQL_HOST=mysqlcontainer \
-          -e MYSQL_PORT=3306 \
-          -e MYSQL_DB_NAME=teste \
-          -e MYSQL_USER=root \
-          -e MYSQL_PASSWORD=root \
-          lucasalves5678/demo:latest
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Setup Java
+              uses: actions/setup-java@v3
+              with:
+                distribution: 'temurin'
+                java-version: '17'
+            - name: Build project
+              run: ./gradlew clean build -x test
+            - name: Change permissions
+              run: chmod +x ./gradlew
+
+            - name: Login Docker Hub
+              run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+            - name: Build docker image
+              run: docker build -t lucasalves5678/demo .
+            - name: Push image docker
+              run: docker push lucasalves5678/demo
+    deploy:
+        needs: build
+        runs-on: self-hosted
+        steps:
+            - name: Pull image from docker hub
+              run:  docker pull lucasalves5678/demo:latest  
+            - name: Remove docker container
+              run: docker rm -f apiDemo || true
+            - name: Run docker container
+              run: |
+               docker run -d -p 8090:8080 --name testeDemo --net networkmysql \
+               -e MYSQL_HOST=mysqlcontainer \
+               -e MYSQL_PORT=3306 \
+               -e MYSQL_DB_NAME=teste \
+               -e MYSQL_USER=root \
+               -e MYSQL_PASSWORD=root \
+               lucasalves5678/demo:latest
