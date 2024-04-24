@@ -44,7 +44,7 @@ public class UserController {
 
     @GetMapping("/teste1")
     private ResponseEntity<String> Teste1(){
-        return ResponseEntity.ok().body("Eu sou um novo metodo");
+        return ResponseEntity.ok().body("Eu sou um novo metodo 2");
     }
     //
 }
