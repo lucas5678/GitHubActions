@@ -14,7 +14,7 @@ jobs:
         run: docker rm -f apiDemo || true
       - name: Run docker container
         run: |
-          docker run -d -p 8090:8080 --name testeDemo --net networkmysql \
+          docker run -d -p 8090:8080 --name apiDemo --net networkmysql \
           -e MYSQL_HOST=mysqlcontainer \
           -e MYSQL_PORT=3306 \
           -e MYSQL_DB_NAME=teste \
