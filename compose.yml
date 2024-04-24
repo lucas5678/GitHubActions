@@ -1,0 +1,37 @@
+version: '3.8'
+
+volumes:
+  db_spring:
+
+networks:
+  my-network:
+
+services:
+  mysqlcompose:
+    image: mysql:latest
+    container_name: mysqlcompose
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: teste
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_spring:/var/lib/mysql
+    networks:
+      - my-network
+
+  DemoCompose:
+    image: lucasalves5678/teste-de-api-demo:latest
+    container_name: DemoCompose
+    environment:
+      MYSQL_HOST: mysqlcompose
+      MYSQL_PORT: 3306
+      MYSQL_DB_NAME: teste
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "8090:8080"
+    networks:
+      - my-network
+    depends_on:
+      - mysqlcompose
