@@ -18,6 +18,9 @@ jobs:
                 java-version: '17'
             - name: Build project
               run: ./gradlew clean build -x test
+            - name: Change permissions
+              run: chmod +x ./gradlew
+              
             - name: Login Docker Hub
               run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
             - name: Build docker image
